@@ -1,0 +1,2649 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>Bal Ganesha Temple Surfers 3D - Ultimate Asura & Nandi Edition</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+            -webkit-user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        html,
+        body {
+            width: 100vw;
+            height: 100vh;
+            height: 100dvh;
+            overflow: hidden;
+            background: #020508;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            touch-action: none;
+            overscroll-behavior: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            contain: strict;
+        }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: block;
+            touch-action: none;
+            z-index: 1;
+        }
+
+        #hud {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: env(safe-area-inset-top, 12px) 16px 10px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 25;
+            pointer-events: none;
+        }
+
+        .hud-box {
+            background: linear-gradient(180deg, rgba(10, 22, 18, 0.95) 0%, rgba(4, 10, 8, 0.98) 100%);
+            border: 1.5px solid rgba(255, 195, 0, 0.9);
+            padding: 6px 14px;
+            border-radius: 12px;
+            color: #fff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8), inset 0 0 12px rgba(255, 195, 0, 0.2);
+            min-width: 82px;
+            text-align: center;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .hud-label {
+            font-size: 8.5px;
+            font-weight: 900;
+            letter-spacing: 1.5px;
+            color: #ffaa00;
+            text-transform: uppercase;
+        }
+
+        .hud-stat {
+            font-size: 20px;
+            font-weight: 900;
+            color: #ffe066;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.85);
+            font-variant-numeric: tabular-nums;
+        }
+
+        .hud-btn-group {
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+        }
+
+        .hud-btn {
+            background: linear-gradient(180deg, rgba(14, 28, 24, 0.95) 0%, rgba(6, 14, 12, 0.98) 100%);
+            border: 1.5px solid rgba(255, 195, 0, 0.9);
+            color: #ffd700;
+            font-size: 16px;
+            padding: 7px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            line-height: 1;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+            transition: transform 0.1s;
+        }
+
+        .hud-btn:active {
+            transform: scale(0.92);
+        }
+
+        #shiva-guidance {
+            position: absolute;
+            top: calc(env(safe-area-inset-top, 10px) + 60px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: linear-gradient(90deg, rgba(4, 14, 28, 0.96), rgba(10, 30, 48, 0.96));
+            border: 1.5px solid #00ffff;
+            box-shadow: 0 0 22px rgba(0, 255, 255, 0.5);
+            color: #e0f7fa;
+            font-size: 12px;
+            font-weight: 800;
+            padding: 7px 20px;
+            border-radius: 30px;
+            z-index: 24;
+            pointer-events: none;
+            white-space: nowrap;
+            max-width: 90vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: none;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        #popup-notice {
+            position: absolute;
+            top: 42%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ffe600;
+            font-size: 24px;
+            font-weight: 900;
+            pointer-events: none;
+            text-shadow: 0 0 18px rgba(255, 215, 0, 0.95), 0 3px 6px #000;
+            opacity: 0;
+            transition: opacity 0.15s ease, transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+            z-index: 26;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        #popup-notice.show {
+            opacity: 1;
+            transform: translate(-50%, -75px) scale(1.15);
+        }
+
+        #power-container {
+            position: absolute;
+            top: calc(env(safe-area-inset-top, 10px) + 98px);
+            left: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        .power-badge {
+            font-weight: 900;
+            font-size: 10px;
+            display: none;
+            background: rgba(4, 12, 10, 0.96);
+            padding: 5px 14px;
+            border-radius: 16px;
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+            letter-spacing: 0.8px;
+        }
+
+        #badge-magnet {
+            color: #00f5d4;
+            border: 1.5px solid #00f5d4;
+        }
+
+        #badge-shield {
+            color: #ffaa00;
+            border: 1.5px solid #ffaa00;
+        }
+
+        #badge-fly {
+            color: #ffd700;
+            border: 1.5px solid #ffd700;
+        }
+
+        #mobile-controls {
+            position: absolute;
+            bottom: calc(env(safe-area-inset-bottom, 10px) + 16px);
+            left: 0;
+            width: 100%;
+            display: none;
+            justify-content: space-between;
+            padding: 0 20px;
+            z-index: 40;
+            pointer-events: none;
+        }
+
+        .m-btn-group {
+            display: flex;
+            gap: 16px;
+            pointer-events: auto;
+        }
+
+        .m-btn {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(255, 170, 0, 0.55) 0%, rgba(200, 80, 0, 0.55) 100%);
+            border: 2px solid rgba(255, 220, 100, 0.98);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 900;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.75);
+            touch-action: none;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .m-btn:active {
+            background: linear-gradient(135deg, rgba(255, 220, 0, 0.95) 0%, rgba(255, 120, 0, 0.95) 100%);
+            transform: scale(0.92);
+        }
+
+        .screen-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 50;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            color: #fff;
+            text-align: center;
+            padding: env(safe-area-inset-top, 28px) 24px env(safe-area-inset-bottom, 28px) 24px;
+            background: radial-gradient(circle at 50% 20%, rgba(8, 24, 20, 0.75) 0%, rgba(2, 5, 8, 0.96) 100%);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+
+        .lobby-panel {
+            background: linear-gradient(180deg, rgba(14, 32, 26, 0.95) 0%, rgba(6, 14, 12, 0.98) 100%);
+            border: 2px solid rgba(255, 215, 0, 0.85);
+            border-radius: 28px;
+            padding: 24px 28px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), inset 0 0 20px rgba(255, 195, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .festive-wishes {
+            font-size: 12px;
+            font-weight: 900;
+            color: #ffe066;
+            letter-spacing: 3px;
+            text-shadow: 0 0 12px rgba(255, 200, 0, 0.9);
+        }
+
+        .telugu-sub {
+            font-size: 11px;
+            font-weight: 800;
+            color: #ff9800;
+            letter-spacing: 1.5px;
+        }
+
+        .game-title {
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            background: linear-gradient(135deg, #ffffff 0%, #ffc72c 50%, #ff4500 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 6px 16px rgba(0, 0, 0, 0.9));
+            margin-top: 4px;
+        }
+
+        .lobby-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 22px;
+            background: rgba(18, 40, 32, 0.95);
+            border: 1.5px solid rgba(255, 215, 0, 0.75);
+            border-radius: 24px;
+            color: #ffd700;
+            font-size: 13px;
+            font-weight: 900;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .lobby-footer {
+            width: 100%;
+            max-width: 420px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .btn-play {
+            width: 100%;
+            background: linear-gradient(135deg, #ff9900 0%, #d82b00 100%);
+            border: 2px solid #ffe600;
+            color: white;
+            font-size: 19px;
+            font-weight: 900;
+            padding: 16px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 0 35px rgba(255, 102, 0, 0.8), 0 10px 30px rgba(0, 0, 0, 0.7);
+            transition: transform 0.15s ease;
+            touch-action: manipulation;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            letter-spacing: 0.8px;
+        }
+
+        .btn-play:active {
+            transform: scale(0.96) !important;
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1.5px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            font-size: 15px;
+            font-weight: 800;
+            padding: 13px;
+            border-radius: 30px;
+            cursor: pointer;
+            width: 100%;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        #pause-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(2, 6, 10, 0.92);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            z-index: 60;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: #fff;
+        }
+
+        .pause-card {
+            background: linear-gradient(180deg, rgba(12, 28, 22, 0.98) 0%, rgba(4, 12, 10, 0.98) 100%);
+            border: 2px solid #ffd700;
+            border-radius: 24px;
+            padding: 26px;
+            width: 100%;
+            max-width: 340px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 14px 40px rgba(0, 0, 0, 0.8);
+            text-align: center;
+        }
+
+        .deluxe-card {
+            background: linear-gradient(180deg, rgba(14, 32, 26, 0.98) 0%, rgba(4, 12, 10, 0.98) 100%);
+            border: 2px solid #ffd700;
+            border-radius: 28px;
+            padding: 22px 26px;
+            width: 100%;
+            max-width: 420px;
+            margin-bottom: 14px;
+            box-shadow: 0 0 40px rgba(255, 215, 0, 0.45), 0 16px 50px rgba(0, 0, 0, 0.85);
+        }
+
+        .high-score-banner {
+            display: none;
+            background: linear-gradient(90deg, #ff007f, #ff9900);
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            padding: 6px 16px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 14px 0;
+            padding: 12px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.18);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .res-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .res-label {
+            font-size: 10px;
+            text-transform: uppercase;
+            color: #ffaa00;
+            font-weight: 800;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+        }
+
+        .res-value {
+            font-size: 22px;
+            font-weight: 900;
+            color: #ffd700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.7);
+        }
+
+        .devotion-title {
+            font-size: 13px;
+            font-weight: 800;
+            color: #80deea;
+            margin-top: 4px;
+            letter-spacing: 1px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+
+<body>
+
+    <div id="shiva-guidance">🔱 Shiva: "Run with joy, Vinayaka! I guide your steps!"</div>
+
+    <div id="hud" style="display: none;">
+        <div class="hud-box">
+            <div class="hud-label">Modaks</div>
+            <div class="hud-stat" id="score-val">0</div>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <div class="hud-box">
+                <div class="hud-label">Distance</div>
+                <div class="hud-stat" id="dist-val">0m</div>
+            </div>
+            <div class="hud-btn-group">
+                <button class="hud-btn" id="theme-btn" title="Toggle Dawn / Night">🌙</button>
+                <button class="hud-btn" id="weather-btn" title="Cycle Weather (Clear / Monsoon / Petals)">☀️</button>
+                <button class="hud-btn" id="pause-btn" title="Pause Game">⏸</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="popup-notice"></div>
+
+    <div id="power-container">
+        <div id="badge-magnet" class="power-badge">⚡ TRISHUL MAGNET</div>
+        <div id="badge-shield" class="power-badge">🛡️ KAVACHA SHIELD</div>
+        <div id="badge-fly" class="power-badge">🪷 PUSHPAKA VIMANAM</div>
+    </div>
+
+    <div id="mobile-controls">
+        <div class="m-btn-group">
+            <div class="m-btn" id="m-left">◀</div>
+            <div class="m-btn" id="m-right">▶</div>
+        </div>
+        <div class="m-btn-group">
+            <div class="m-btn" id="m-jump">▲</div>
+            <div class="m-btn" id="m-slide">▼</div>
+        </div>
+    </div>
+
+    <div id="pause-screen">
+        <div class="pause-card">
+            <h2 style="color: #ffd700; font-size: 24px; font-weight: 900; letter-spacing: 1px;">TEMPLE REST</h2>
+            <p style="font-size: 13px; color: #e0f7fa;">Vinayaka, Nandi and Mushak rest beneath Mount Kailash.</p>
+            <button class="btn-play" id="resume-btn" style="padding: 13px; font-size: 16px;">RESUME ▶</button>
+            <button class="btn-secondary" id="pause-restart-btn">RESTART ↺</button>
+            <button class="btn-secondary" id="pause-lobby-btn">LOBBY 🏛️</button>
+        </div>
+    </div>
+
+    <div id="start-screen" class="screen-overlay">
+        <div class="lobby-panel">
+            <div class="festive-wishes">🌸 HAPPY VINAYAKA CHATURTHI 🌸</div>
+            <div class="telugu-sub">వినాయక చవితి శుభాకాంక్షలు • HAR HAR MAHADEV</div>
+            <div class="game-title">BAL GANESHA SURFERS</div>
+            <div class="lobby-badge">
+                🏆 SANCTUM HIGH SCORE: <span id="lobby-best-val" style="color: #fff; margin-left: 6px;">0</span>
+            </div>
+        </div>
+
+        <div class="lobby-footer">
+            <button class="btn-play" id="start-btn">
+                <span>ENTER TEMPLE</span> ➔
+            </button>
+            <div style="font-size: 11px; color: #d5d0e0; background: rgba(0,0,0,0.6); padding: 7px 16px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.15);">
+                Swipe / A-D to Move • ⬆ Jump • ⬇ Slide • ☀️ Weather Engine
+            </div>
+        </div>
+    </div>
+
+    <div id="gameover-screen" class="screen-overlay" style="display: none; justify-content: center;">
+        <div class="deluxe-card">
+            <div class="high-score-banner" id="high-score-banner">🎉 NEW RECORD! HAR HAR MAHADEV! 🎉</div>
+            <h2 id="result-status-title" style="color: #ffd700; font-size: 24px; font-weight: 900; margin-bottom: 2px; letter-spacing: 0.5px;">DIVINE RUN COMPLETED</h2>
+            <div class="devotion-title" id="devotion-rank">Rank: Siddhi Vinayaka</div>
+
+            <div class="results-grid">
+                <div class="res-item">
+                    <div class="res-label">Modaks</div>
+                    <div class="res-value" id="final-modaks">0</div>
+                </div>
+                <div class="res-item">
+                    <div class="res-label">Distance</div>
+                    <div class="res-value" id="final-distance">0m</div>
+                </div>
+                <div class="res-item">
+                    <div class="res-label">Best</div>
+                    <div class="res-value" id="final-best">0</div>
+                </div>
+            </div>
+
+            <p id="shiva-final-blessing" style="color: #90e0ef; font-weight: 700; font-size: 12px; line-height: 1.5;">
+                🔱 Lord Shiva: "Well done, my son! Your wisdom and agility illuminate all worlds!"
+            </p>
+        </div>
+
+        <div style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn-play" id="restart-btn" style="padding: 15px; font-size: 18px;">
+                PLAY AGAIN ↺
+            </button>
+            <button class="btn-secondary" id="gameover-lobby-btn">
+                TEMPLE LOBBY 🏛️
+            </button>
+        </div>
+    </div>
+
+    <script>
+        /* ==========================================================
+        1. AUDIO ENGINE (CLEAN SFX ONLY - NO BACKGROUND NOISE)
+        ========================================================== */
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        function playSfx(type) {
+            if (!audioCtx || audioCtx.state !== 'running') return;
+            const t = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'modak') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(659.25, t);
+                osc.frequency.exponentialRampToValueAtTime(1318.51, t + 0.12);
+                gain.gain.setValueAtTime(0.2, t);
+                gain.gain.linearRampToValueAtTime(0.01, t + 0.12);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.12);
+            } else if (type === 'jump') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(220, t);
+                osc.frequency.exponentialRampToValueAtTime(560, t + 0.16);
+                gain.gain.setValueAtTime(0.25, t);
+                gain.gain.linearRampToValueAtTime(0.01, t + 0.16);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.16);
+            } else if (type === 'slide') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(260, t);
+                osc.frequency.linearRampToValueAtTime(100, t + 0.18);
+                gain.gain.setValueAtTime(0.18, t);
+                gain.gain.linearRampToValueAtTime(0.01, t + 0.18);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.18);
+            } else if (type === 'crash') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(110, t);
+                osc.frequency.exponentialRampToValueAtTime(30, t + 0.35);
+                gain.gain.setValueAtTime(0.35, t);
+                gain.gain.linearRampToValueAtTime(0.01, t + 0.35);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.35);
+            } else if (type === 'shiva_bell') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(216, t);
+                osc.frequency.exponentialRampToValueAtTime(432, t + 0.4);
+                gain.gain.setValueAtTime(0.3, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.8);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.8);
+            } else if (type === 'thunder') {
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(80, t);
+                osc.frequency.exponentialRampToValueAtTime(20, t + 0.7);
+                gain.gain.setValueAtTime(0.4, t);
+                gain.gain.exponentialRampToValueAtTime(0.001, t + 0.7);
+                osc.onended = () => { osc.disconnect(); gain.disconnect(); };
+                osc.start(t);
+                osc.stop(t + 0.7);
+            } else if (type === 'victory') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const vOsc = audioCtx.createOscillator();
+                    const vGain = audioCtx.createGain();
+                    vOsc.connect(vGain);
+                    vGain.connect(audioCtx.destination);
+                    vOsc.frequency.setValueAtTime(freq, t + i * 0.08);
+                    vGain.gain.setValueAtTime(0.15, t + i * 0.08);
+                    vGain.gain.exponentialRampToValueAtTime(0.001, t + 1.2);
+                    vOsc.start(t + i * 0.08);
+                    vOsc.stop(t + 1.2);
+                });
+            }
+        }
+
+        /* ==========================================================
+            2. THREE.JS RENDERING & SHADING PIPELINE
+        ========================================================== */
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0f2128);
+        scene.fog = new THREE.FogExp2(0x0f2128, 0.009);
+
+        const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 950);
+        const renderer = new THREE.WebGLRenderer({
+            antialias: true,
+            powerPreference: 'high-performance'
+        });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.0));
+        renderer.toneMapping = THREE.ACESFilmicToneMapping;
+        renderer.toneMappingExposure = 1.25;
+        renderer.outputEncoding = THREE.sRGBEncoding;
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+        document.body.appendChild(renderer.domElement);
+
+        const hemiLight = new THREE.HemisphereLight(0xffedd5, 0x142125, 0.9);
+        scene.add(hemiLight);
+
+        const sunLight = new THREE.DirectionalLight(0xfff6e5, 1.6);
+        sunLight.position.set(24, 48, 22);
+        sunLight.castShadow = true;
+        sunLight.shadow.mapSize.width = 2048;
+        sunLight.shadow.mapSize.height = 2048;
+        sunLight.shadow.camera.near = 0.5;
+        sunLight.shadow.camera.far = 160;
+        const d = 32;
+        sunLight.shadow.camera.left = -d;
+        sunLight.shadow.camera.right = d;
+        sunLight.shadow.camera.top = d;
+        sunLight.shadow.camera.bottom = -d;
+        sunLight.shadow.bias = -0.00035;
+        scene.add(sunLight);
+
+        const ganeshaAuraLight = new THREE.PointLight(0xffa200, 2.8, 18);
+        scene.add(ganeshaAuraLight);
+
+        /* ==========================================================
+            3. PROCEDURAL TEXTURES
+        ========================================================== */
+        function createBarkTexture() {
+            const cv = document.createElement('canvas');
+            cv.width = 512;
+            cv.height = 512;
+            const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#3e2718';
+            ctx.fillRect(0, 0, 512, 512);
+            for (let y = 0; y < 512; y += 8) {
+                ctx.fillStyle = y % 16 === 0 ? '#26170d' : '#523420';
+                ctx.fillRect(0, y, 512, 4);
+            }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(1, 4);
+            return tex;
+        }
+
+        function createFurBumpTexture() {
+            const cv = document.createElement('canvas');
+            cv.width = 256;
+            cv.height = 256;
+            const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#808080';
+            ctx.fillRect(0, 0, 256, 256);
+            for (let i = 0; i < 5000; i++) {
+                const val = Math.floor(Math.random() * 255);
+                ctx.fillStyle = `rgb(${val},${val},${val})`;
+                ctx.fillRect(Math.random() * 256, Math.random() * 256, 1.5, 3);
+            }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(4, 4);
+            return tex;
+        }
+
+        function createTempleStoneTexture() {
+            const cv = document.createElement('canvas');
+            cv.width = 512;
+            cv.height = 512;
+            const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#443c35';
+            ctx.fillRect(0, 0, 512, 512);
+            ctx.strokeStyle = '#28231e';
+            ctx.lineWidth = 4;
+            for (let x = 0; x < 512; x += 64) {
+                for (let y = 0; y < 512; y += 64) {
+                    const shade = 55 + Math.random() * 24;
+                    ctx.fillStyle = `rgb(${shade + 8}, ${shade}, ${shade - 6})`;
+                    ctx.fillRect(x + 2, y + 2, 60, 60);
+                    ctx.strokeRect(x + 2, y + 2, 60, 60);
+                }
+            }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            tex.repeat.set(2, 8);
+            return tex;
+        }
+
+        function createTeakWoodTexture() {
+            const cv = document.createElement('canvas');
+            cv.width = 512;
+            cv.height = 512;
+            const ctx = cv.getContext('2d');
+            ctx.fillStyle = '#42220f';
+            ctx.fillRect(0, 0, 512, 512);
+            for (let i = 0; i < 500; i++) {
+                ctx.fillStyle = Math.random() > 0.5 ? '#30180a' : '#572f17';
+                ctx.fillRect(Math.random() * 512, 0, Math.random() * 8 + 2, 512);
+            }
+            const tex = new THREE.CanvasTexture(cv);
+            tex.wrapS = THREE.RepeatWrapping;
+            tex.wrapT = THREE.RepeatWrapping;
+            return tex;
+        }
+
+        const barkTexture = createBarkTexture();
+        const furBumpTexture = createFurBumpTexture();
+        const stoneTexture = createTempleStoneTexture();
+        const teakWoodTexture = createTeakWoodTexture();
+
+        /* ==========================================================
+            4. PBR MATERIALS SETUP
+        ========================================================== */
+        const LANE_WIDTH = 2.8;
+        const LANES = [-LANE_WIDTH, 0, LANE_WIDTH];
+
+        const ganeshaSkinMat = new THREE.MeshStandardMaterial({
+            color: 0xf29d63,
+            roughness: 0.45,
+            metalness: 0.04,
+            bumpMap: furBumpTexture,
+            bumpScale: 0.015
+        });
+        const ivoryMat = new THREE.MeshStandardMaterial({
+            color: 0xfffff0,
+            roughness: 0.25,
+            metalness: 0.15
+        });
+        const dhotiMat = new THREE.MeshStandardMaterial({
+            color: 0xff5500,
+            roughness: 0.72,
+            metalness: 0.08
+        });
+        const goldMat = new THREE.MeshStandardMaterial({
+            color: 0xffc300,
+            roughness: 0.18,
+            metalness: 0.94
+        });
+        const rubyGemMat = new THREE.MeshStandardMaterial({
+            color: 0xd90429,
+            roughness: 0.06,
+            metalness: 0.55
+        });
+        const redClothMat = new THREE.MeshStandardMaterial({
+            color: 0xc9182b,
+            roughness: 0.72
+        });
+        const pinkMat = new THREE.MeshStandardMaterial({
+            color: 0xff8fa3,
+            roughness: 0.38
+        });
+        const traditionalHairMat = new THREE.MeshStandardMaterial({
+            color: 0x160f09,
+            roughness: 0.95
+        });
+
+        const scleraMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 0.08
+        });
+        const irisMat = new THREE.MeshStandardMaterial({
+            color: 0x3b2200,
+            roughness: 0.15
+        });
+        const pupilMat = new THREE.MeshBasicMaterial({
+            color: 0x000000
+        });
+        const eyeHighlightMat = new THREE.MeshBasicMaterial({
+            color: 0xffffff
+        });
+
+        const basaltStoneMat = new THREE.MeshStandardMaterial({
+            color: 0x332e29,
+            map: stoneTexture,
+            roughness: 0.85,
+            metalness: 0.12
+        });
+        const brassRimMat = new THREE.MeshStandardMaterial({
+            color: 0xd4a329,
+            roughness: 0.25,
+            metalness: 0.88
+        });
+        const hammeredBronzeMat = new THREE.MeshStandardMaterial({
+            color: 0x8a5b28,
+            roughness: 0.3,
+            metalness: 0.85
+        });
+        const glowingEmbersMat = new THREE.MeshStandardMaterial({
+            color: 0xff3300,
+            emissive: 0xff2200,
+            emissiveIntensity: 2.5,
+            roughness: 0.85
+        });
+
+        const nandiWhiteMat = new THREE.MeshStandardMaterial({
+            color: 0xf2f0eb,
+            roughness: 0.42,
+            metalness: 0.03,
+            bumpMap: furBumpTexture,
+            bumpScale: 0.035
+        });
+        const nandiMuzzleMat = new THREE.MeshStandardMaterial({
+            color: 0x38302b,
+            roughness: 0.4,
+            metalness: 0.05
+        });
+        const hornRealisticMat = new THREE.MeshStandardMaterial({
+            color: 0x1c1b1a,
+            roughness: 0.35,
+            metalness: 0.25
+        });
+        const hoofMat = new THREE.MeshStandardMaterial({
+            color: 0x11100f,
+            roughness: 0.3,
+            metalness: 0.3
+        });
+        const eyeBlackMat = new THREE.MeshStandardMaterial({
+            color: 0x030303,
+            roughness: 0.05,
+            metalness: 0.95
+        });
+
+        const asuraSkinMat = new THREE.MeshStandardMaterial({
+            color: 0x364f38,
+            roughness: 0.65,
+            metalness: 0.1,
+            bumpMap: furBumpTexture,
+            bumpScale: 0.06
+        });
+        const asuraArmorMat = new THREE.MeshStandardMaterial({
+            color: 0x221d19,
+            roughness: 0.5,
+            metalness: 0.65
+        });
+        const asuraClubMat = new THREE.MeshStandardMaterial({
+            color: 0x544c42,
+            roughness: 0.8,
+            metalness: 0.05
+        });
+        const asuraEyeMat = new THREE.MeshBasicMaterial({
+            color: 0xff1a00
+        });
+
+        const ratFurMat = new THREE.MeshStandardMaterial({
+            color: 0x524842,
+            roughness: 0.65,
+            metalness: 0.05,
+            bumpMap: furBumpTexture,
+            bumpScale: 0.08
+        });
+        const ratSkinMat = new THREE.MeshStandardMaterial({
+            color: 0xf5a898,
+            roughness: 0.45
+        });
+
+        const palmBarkMat = new THREE.MeshStandardMaterial({
+            color: 0x5a4130,
+            map: barkTexture,
+            roughness: 0.88,
+            metalness: 0.05
+        });
+        const palmLeafMat = new THREE.MeshStandardMaterial({
+            color: 0x1e821e,
+            roughness: 0.35,
+            metalness: 0.08,
+            side: THREE.DoubleSide
+        });
+        const coconutMat = new THREE.MeshStandardMaterial({
+            color: 0x422e17,
+            roughness: 0.82
+        });
+
+        const fireOrangeMat = new THREE.MeshBasicMaterial({ color: 0xff4500 });
+        const fireYellowMat = new THREE.MeshBasicMaterial({ color: 0xffd000 });
+        const marigoldOrangeMat = new THREE.MeshStandardMaterial({ color: 0xff7700, roughness: 0.68 });
+        const marigoldYellowMat = new THREE.MeshStandardMaterial({ color: 0xffb700, roughness: 0.68 });
+
+        const shivaSkinMat = new THREE.MeshStandardMaterial({ color: 0xb8d8d8, roughness: 0.58 });
+        const shivaHairMat = new THREE.MeshStandardMaterial({ color: 0x1f1713, roughness: 0.88 });
+        const moonMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        const trishulMat = new THREE.MeshStandardMaterial({ color: 0xffc300, roughness: 0.18, metalness: 0.92 });
+
+        const stonePathwayMat = new THREE.MeshStandardMaterial({
+            color: 0x665c52,
+            map: stoneTexture,
+            roughness: 0.78,
+            metalness: 0.15
+        });
+        const grassMat = new THREE.MeshStandardMaterial({ color: 0x22491a, roughness: 0.92 });
+        const waterMat = new THREE.MeshStandardMaterial({
+            color: 0x007799,
+            roughness: 0.06,
+            metalness: 0.88,
+            transparent: true,
+            opacity: 0.9
+        });
+
+        const cliffRockMat = new THREE.MeshStandardMaterial({
+            color: 0x1a232a,
+            roughness: 0.92,
+            metalness: 0.15,
+            bumpMap: furBumpTexture,
+            bumpScale: 0.15
+        });
+        const peakSnowMat = new THREE.MeshStandardMaterial({ color: 0xf0f8ff, roughness: 0.22, metalness: 0.08 });
+        const hyperWaterMat = new THREE.MeshStandardMaterial({
+            color: 0x005577,
+            roughness: 0.1,
+            metalness: 0.95,
+            transparent: true,
+            opacity: 0.88
+        });
+
+        const magnetMat = new THREE.MeshStandardMaterial({ color: 0x00f5d4, roughness: 0.18, metalness: 0.85 });
+        const shieldMat = new THREE.MeshStandardMaterial({ color: 0xffaa00, roughness: 0.18, metalness: 0.85 });
+
+        /* ==========================================================
+            5. WEATHER & DAY/NIGHT ENGINES
+        ========================================================== */
+        let currentTheme = 'dawn';
+        const themeBtn = document.getElementById('theme-btn');
+
+        function applyTheme(themeName) {
+            currentTheme = themeName;
+            if (themeName === 'night') {
+                scene.background.setHex(0x060919);
+                scene.fog.color.setHex(0x060919);
+                hemiLight.color.setHex(0x7085a0);
+                hemiLight.groundColor.setHex(0x0c121e);
+                sunLight.color.setHex(0x85b4f2);
+                sunLight.intensity = 0.8;
+                ganeshaAuraLight.color.setHex(0x00ffff);
+                ganeshaAuraLight.intensity = 3.2;
+                themeBtn.innerText = '☀️';
+            } else {
+                scene.background.setHex(0x0f2128);
+                scene.fog.color.setHex(0x0f2128);
+                hemiLight.color.setHex(0xffedd5);
+                hemiLight.groundColor.setHex(0x142125);
+                sunLight.color.setHex(0xfff6e5);
+                sunLight.intensity = 1.6;
+                ganeshaAuraLight.color.setHex(0xffa200);
+                ganeshaAuraLight.intensity = 2.8;
+                themeBtn.innerText = '🌙';
+            }
+        }
+        themeBtn.addEventListener('click', () => {
+            applyTheme(currentTheme === 'dawn' ? 'night' : 'dawn');
+        });
+
+        const WEATHER_MODES = ['CLEAR', 'RAIN', 'PETALS'];
+        let weatherIdx = 0;
+        const weatherBtn = document.getElementById('weather-btn');
+
+        const RAIN_COUNT = 800;
+        const rainGeo = new THREE.BufferGeometry();
+        const rainPos = new Float32Array(RAIN_COUNT * 3);
+        for (let i = 0; i < RAIN_COUNT; i++) {
+            rainPos[i * 3] = (Math.random() - 0.5) * 55;
+            rainPos[i * 3 + 1] = Math.random() * 28;
+            rainPos[i * 3 + 2] = (Math.random() - 0.5) * 85;
+        }
+        rainGeo.setAttribute('position', new THREE.BufferAttribute(rainPos, 3));
+        const rainMat = new THREE.PointsMaterial({
+            color: 0x88ccff,
+            size: 0.24,
+            transparent: true,
+            opacity: 0.75
+        });
+        const rainParticles = new THREE.Points(rainGeo, rainMat);
+        rainParticles.visible = false;
+        scene.add(rainParticles);
+
+        const PETAL_COUNT = 350;
+        const petalGeo = new THREE.BufferGeometry();
+        const petalPos = new Float32Array(PETAL_COUNT * 3);
+        for (let i = 0; i < PETAL_COUNT; i++) {
+            petalPos[i * 3] = (Math.random() - 0.5) * 50;
+            petalPos[i * 3 + 1] = Math.random() * 22;
+            petalPos[i * 3 + 2] = (Math.random() - 0.5) * 75;
+        }
+        petalGeo.setAttribute('position', new THREE.BufferAttribute(petalPos, 3));
+        const petalMat = new THREE.PointsMaterial({
+            color: 0xff66aa,
+            size: 0.4,
+            transparent: true,
+            opacity: 0.9
+        });
+        const petalParticles = new THREE.Points(petalGeo, petalMat);
+        petalParticles.visible = false;
+        scene.add(petalParticles);
+
+        function cycleWeather() {
+            weatherIdx = (weatherIdx + 1) % WEATHER_MODES.length;
+            const mode = WEATHER_MODES[weatherIdx];
+            if (mode === 'CLEAR') {
+                weatherBtn.innerText = '☀️';
+                rainParticles.visible = false;
+                petalParticles.visible = false;
+                scene.fog.density = 0.009;
+            } else if (mode === 'RAIN') {
+                weatherBtn.innerText = '🌧️';
+                rainParticles.visible = true;
+                petalParticles.visible = false;
+                scene.fog.density = 0.016;
+                playSfx('thunder');
+            } else if (mode === 'PETALS') {
+                weatherBtn.innerText = '🌸';
+                rainParticles.visible = false;
+                petalParticles.visible = true;
+                scene.fog.density = 0.011;
+                playSfx('shiva_bell');
+            }
+        }
+        weatherBtn.addEventListener('click', cycleWeather);
+
+        /* ==========================================================
+            6. MOUNTAINS, WATERFALLS & FOUNTAINS
+        ========================================================== */
+        function createPhotorealisticKailashRidge() {
+            const ridge = new THREE.Group();
+            ridge.position.set(0, 0, -200);
+
+            const peaks = [
+                { x: -90, y: 45, z: -30, r: 40 },
+                { x: -45, y: 65, z: -10, r: 50 },
+                { x: 0, y: 82, z: -20, r: 58 },
+                { x: 45, y: 62, z: 0, r: 48 },
+                { x: 90, y: 44, z: -25, r: 38 }
+            ];
+
+            peaks.forEach(p => {
+                const mountain = new THREE.Mesh(new THREE.ConeGeometry(p.r, p.y, 12), cliffRockMat);
+                mountain.position.set(p.x, p.y / 2, p.z);
+                mountain.castShadow = true;
+                mountain.receiveShadow = true;
+                ridge.add(mountain);
+
+                const snowCap = new THREE.Mesh(new THREE.ConeGeometry(p.r * 0.48, p.y * 0.45, 12), peakSnowMat);
+                snowCap.position.set(p.x, p.y * 0.78, p.z);
+                snowCap.castShadow = true;
+                ridge.add(snowCap);
+            });
+            scene.add(ridge);
+        }
+        createPhotorealisticKailashRidge();
+
+        const waterfalls = [];
+
+        function createPhotorealisticWaterfall(xPos, zPos) {
+            const g = new THREE.Group();
+            g.position.set(xPos, 0, zPos);
+
+            const cliff = new THREE.Mesh(new THREE.BoxGeometry(9, 28, 8), cliffRockMat);
+            cliff.position.set(0, 14, 0);
+            cliff.castShadow = true;
+            cliff.receiveShadow = true;
+            g.add(cliff);
+
+            const waterSheet = new THREE.Mesh(new THREE.PlaneGeometry(4.5, 27), hyperWaterMat);
+            waterSheet.position.set(0, 13.5, 4.05);
+            g.add(waterSheet);
+
+            const pool = new THREE.Mesh(new THREE.CylinderGeometry(4.2, 4.5, 0.4, 16), waterMat);
+            pool.position.set(0, 0.15, 4.2);
+            pool.receiveShadow = true;
+            g.add(pool);
+
+            scene.add(g);
+            waterfalls.push(waterSheet);
+        }
+        createPhotorealisticWaterfall(-35, -70);
+        createPhotorealisticWaterfall(-38, -135);
+
+        function makeTempleFountain() {
+            const fountain = new THREE.Group();
+            fountain.userData = { type: 'FOUNTAIN' };
+
+            const basin1 = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.6, 0.4, 16), basaltStoneMat);
+            basin1.position.y = 0.2;
+            fountain.add(basin1);
+
+            const waterLevel1 = new THREE.Mesh(new THREE.CylinderGeometry(2.2, 2.2, 0.1, 16), waterMat);
+            waterLevel1.position.y = 0.42;
+            fountain.add(waterLevel1);
+
+            const stem = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.4, 1.2, 10), basaltStoneMat);
+            stem.position.y = 0.8;
+            fountain.add(stem);
+
+            const basin2 = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.4, 0.3, 16), brassRimMat);
+            basin2.position.y = 1.4;
+            fountain.add(basin2);
+
+            const spoutJet = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.2, 1.2, 8), hyperWaterMat);
+            spoutJet.position.y = 1.9;
+            fountain.add(spoutJet);
+
+            return fountain;
+        }
+
+        const birds = [];
+
+        function createBirds() {
+            const birdGroup = new THREE.Group();
+            for (let i = 0; i < 7; i++) {
+                const bird = new THREE.Group();
+                const wingL = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.3), new THREE.MeshBasicMaterial({ color: 0xffffff, side: THREE.DoubleSide }));
+                wingL.position.x = -0.4;
+                wingL.rotation.y = 0.2;
+                const wingR = wingL.clone();
+                wingR.position.x = 0.4;
+                wingR.rotation.y = -0.2;
+                const body = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.6, 6), new THREE.MeshBasicMaterial({ color: 0xdddddd }));
+                body.rotation.x = Math.PI / 2;
+
+                bird.add(wingL, wingR, body);
+                bird.position.set((i - 3) * 3.5, 18 + Math.random() * 4, -40 - Math.abs(i - 3) * 4);
+                birdGroup.add(bird);
+                birds.push({ mesh: bird, wingL, wingR, offset: i * 0.6 });
+            }
+            scene.add(birdGroup);
+        }
+        createBirds();
+
+        /* ==========================================================
+            7. LORD SHIVA IDOL
+        ========================================================== */
+        function createLordShiva() {
+            const shiva = new THREE.Group();
+            shiva.position.set(0, 16, -95);
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.4, 3.2, 12), shivaSkinMat);
+            torso.position.y = 2.0;
+            torso.castShadow = true;
+            shiva.add(torso);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(1.2, 14, 14), shivaSkinMat);
+            head.position.y = 4.4;
+            head.castShadow = true;
+            shiva.add(head);
+
+            const jata = new THREE.Mesh(new THREE.ConeGeometry(0.9, 1.6, 10), shivaHairMat);
+            jata.position.y = 5.8;
+            jata.castShadow = true;
+            shiva.add(jata);
+
+            const moon = new THREE.Mesh(new THREE.RingGeometry(0.4, 0.6, 12, 1, 0, Math.PI), moonMat);
+            moon.position.set(0.6, 5.6, 0.8);
+            moon.rotation.z = -0.4;
+            shiva.add(moon);
+
+            const trishulStaff = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.08, 9, 8), trishulMat);
+            trishulStaff.position.set(3.2, 4.5, 0);
+            trishulStaff.castShadow = true;
+            shiva.add(trishulStaff);
+
+            const trishulHead = new THREE.Mesh(new THREE.TorusGeometry(0.7, 0.1, 8, 12, Math.PI), trishulMat);
+            trishulHead.position.set(3.2, 8.8, 0);
+            trishulHead.rotation.z = Math.PI;
+            shiva.add(trishulHead);
+
+            const shivaHalo = new THREE.Mesh(new THREE.RingGeometry(1.8, 3.2, 24), new THREE.MeshBasicMaterial({
+                color: 0x00ffff,
+                side: THREE.DoubleSide,
+                transparent: true,
+                opacity: 0.5
+            }));
+            shivaHalo.position.set(0, 4.2, -0.5);
+            shiva.add(shivaHalo);
+            shiva.userData.halo = shivaHalo;
+
+            scene.add(shiva);
+            return shiva;
+        }
+        const shivaGod = createLordShiva();
+
+        /* ==========================================================
+            8. BAL GANESHA MODEL
+        ========================================================== */
+        const pedestalGroup = new THREE.Group();
+        const pedestalBase = new THREE.Mesh(new THREE.CylinderGeometry(2.4, 2.7, 0.35, 24), goldMat);
+        pedestalBase.position.y = 0.175;
+        pedestalBase.receiveShadow = true;
+        pedestalGroup.add(pedestalBase);
+        scene.add(pedestalGroup);
+
+        function createBalGanesha() {
+            const rootGroup = new THREE.Group();
+            const modelInner = new THREE.Group();
+            rootGroup.add(modelInner);
+            const rig = {};
+
+            const belly = new THREE.Mesh(new THREE.SphereGeometry(0.72, 24, 24), ganeshaSkinMat);
+            belly.scale.set(1.06, 1.0, 0.96);
+            belly.position.y = 1.0;
+            belly.castShadow = true;
+            modelInner.add(belly);
+            rig.torso = belly;
+
+            const dhoti = new THREE.Mesh(new THREE.CylinderGeometry(0.73, 0.78, 0.52, 24), dhotiMat);
+            dhoti.position.y = 0.74;
+            dhoti.castShadow = true;
+            modelInner.add(dhoti);
+
+            const threadCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.45, 1.45, 0.28), new THREE.Vector3(0, 1.0, 0.55), new THREE.Vector3(0.5, 0.6, 0.35)
+            ]);
+            const sacredThread = new THREE.Mesh(new THREE.TubeGeometry(threadCurve, 12, 0.025, 6, false), ivoryMat);
+            modelInner.add(sacredThread);
+
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0, 1.72, 0);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.56, 24, 24), ganeshaSkinMat);
+            head.castShadow = true;
+            headGroup.add(head);
+
+            rig.eyelids = [];
+            [-0.22, 0.22].forEach((xPos, idx) => {
+                const eyeSocket = new THREE.Group();
+                eyeSocket.position.set(xPos, 0.12, 0.48);
+                eyeSocket.rotation.y = idx === 0 ? -0.2 : 0.2;
+
+                const sclera = new THREE.Mesh(new THREE.SphereGeometry(0.11, 16, 16), scleraMat);
+                sclera.scale.set(1.1, 0.75, 0.6);
+                const iris = new THREE.Mesh(new THREE.SphereGeometry(0.065, 12, 12), irisMat);
+                iris.position.set(0, 0, 0.07);
+                const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.038, 10, 10), pupilMat);
+                pupil.position.set(0, 0, 0.095);
+                const highlight = new THREE.Mesh(new THREE.SphereGeometry(0.02, 8, 8), eyeHighlightMat);
+                highlight.position.set(0.02, 0.02, 0.11);
+
+                const eyelid = new THREE.Mesh(new THREE.SphereGeometry(0.12, 16, 16, 0, Math.PI * 2, 0, Math.PI / 2), ganeshaSkinMat);
+                eyelid.rotation.x = -Math.PI / 2;
+                eyelid.position.set(0, 0.02, 0.02);
+                eyelid.scale.set(1.15, 0.05, 0.8);
+                eyeSocket.add(sclera, iris, pupil, highlight, eyelid);
+                headGroup.add(eyeSocket);
+                rig.eyelids.push(eyelid);
+            });
+
+            const trunkPoints = [
+                new THREE.Vector3(0, -0.05, 0.52), new THREE.Vector3(-0.06, -0.38, 0.78),
+                new THREE.Vector3(-0.24, -0.48, 0.82), new THREE.Vector3(-0.35, -0.32, 0.76)
+            ];
+            const trunk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(trunkPoints), 20, 0.12, 12, false), ganeshaSkinMat);
+            trunk.castShadow = true;
+            headGroup.add(trunk);
+            rig.trunk = trunk;
+
+            const trunkTip = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), rubyGemMat);
+            trunkTip.position.set(-0.35, -0.32, 0.76);
+            headGroup.add(trunkTip);
+
+            const rightTusk = new THREE.Mesh(new THREE.ConeGeometry(0.06, 0.42, 10), ivoryMat);
+            rightTusk.position.set(0.24, -0.16, 0.48);
+            rightTusk.rotation.x = -0.6;
+            rightTusk.rotation.z = -0.3;
+            rightTusk.castShadow = true;
+            headGroup.add(rightTusk);
+
+            const leftTuskBroken = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.18, 10), ivoryMat);
+            leftTuskBroken.position.set(-0.24, -0.16, 0.48);
+            leftTuskBroken.rotation.x = -0.6;
+            leftTuskBroken.rotation.z = 0.3;
+            leftTuskBroken.castShadow = true;
+            headGroup.add(leftTuskBroken);
+
+            const earGeo = new THREE.CylinderGeometry(0.38, 0.38, 0.05, 20);
+            earGeo.rotateX(Math.PI / 2);
+            const leftEarPivot = new THREE.Group();
+            leftEarPivot.position.set(-0.56, 0.06, 0.05);
+            const leftEar = new THREE.Mesh(earGeo, ganeshaSkinMat);
+            leftEar.castShadow = true;
+            leftEarPivot.add(leftEar);
+            headGroup.add(leftEarPivot);
+            rig.leftEar = leftEarPivot;
+
+            const rightEarPivot = new THREE.Group();
+            rightEarPivot.position.set(0.56, 0.06, 0.05);
+            const rightEar = leftEar.clone();
+            rightEar.castShadow = true;
+            rightEarPivot.add(rightEar);
+            headGroup.add(rightEarPivot);
+            rig.rightEar = rightEarPivot;
+
+            const headTopGroup = new THREE.Group();
+            headTopGroup.position.set(0, 0.44, 0);
+
+            const mukutBand = new THREE.Mesh(new THREE.CylinderGeometry(0.46, 0.48, 0.22, 20), goldMat);
+            mukutBand.castShadow = true;
+            headTopGroup.add(mukutBand);
+
+            const centralSpire = new THREE.Mesh(new THREE.ConeGeometry(0.32, 0.78, 20), goldMat);
+            centralSpire.position.set(0, 0.52, 0);
+            centralSpire.castShadow = true;
+            headTopGroup.add(centralSpire);
+
+            const backHairBase = new THREE.Mesh(new THREE.SphereGeometry(0.32, 16, 16), traditionalHairMat);
+            backHairBase.scale.set(1.15, 0.75, 1.0);
+            backHairBase.position.set(0, 0.1, -0.42);
+            backHairBase.castShadow = true;
+            headTopGroup.add(backHairBase);
+
+            headGroup.add(headTopGroup);
+            rig.crownGroup = headTopGroup;
+
+            const haloGroup = new THREE.Group();
+            haloGroup.position.set(0, 0.15, -0.38);
+            const auraOuter = new THREE.Mesh(new THREE.RingGeometry(0.5, 0.92, 28), new THREE.MeshBasicMaterial({
+                color: 0xffb703,
+                side: THREE.DoubleSide
+            }));
+            haloGroup.add(auraOuter);
+            headGroup.add(haloGroup);
+            rig.halo = haloGroup;
+
+            modelInner.add(headGroup);
+            rig.head = headGroup;
+
+            const armGeo = new THREE.CylinderGeometry(0.12, 0.10, 0.6, 14);
+            armGeo.translate(0, -0.3, 0);
+
+            const leftArmPivot = new THREE.Group();
+            leftArmPivot.position.set(-0.76, 1.4, 0);
+            const leftArm = new THREE.Mesh(armGeo, ganeshaSkinMat);
+            leftArm.castShadow = true;
+            leftArmPivot.add(leftArm);
+            const handModak = new THREE.Mesh(new THREE.SphereGeometry(0.15, 12, 12), goldMat);
+            handModak.position.set(0, -0.65, 0.2);
+            leftArmPivot.add(handModak);
+            modelInner.add(leftArmPivot);
+            rig.leftArm = leftArmPivot;
+
+            const rightArmPivot = new THREE.Group();
+            rightArmPivot.position.set(0.76, 1.4, 0);
+            const rightArm = new THREE.Mesh(armGeo, ganeshaSkinMat);
+            rightArm.castShadow = true;
+            rightArmPivot.add(rightArm);
+            const blessingPalm = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.22, 0.06), ganeshaSkinMat);
+            blessingPalm.position.set(0, -0.65, 0.18);
+            const altaDot = new THREE.Mesh(new THREE.CircleGeometry(0.04, 12), new THREE.MeshBasicMaterial({
+                color: 0xd90429,
+                side: THREE.DoubleSide
+            }));
+            altaDot.position.set(0, 0, 0.035);
+            blessingPalm.add(altaDot);
+            rightArmPivot.add(blessingPalm);
+            modelInner.add(rightArmPivot);
+            rig.rightArm = rightArmPivot;
+
+            const legGeo = new THREE.CylinderGeometry(0.16, 0.14, 0.55, 14);
+            legGeo.translate(0, -0.25, 0);
+
+            const leftLegPivot = new THREE.Group();
+            leftLegPivot.position.set(-0.35, 0.6, 0);
+            const leftLeg = new THREE.Mesh(legGeo, dhotiMat);
+            leftLeg.castShadow = true;
+            leftLegPivot.add(leftLeg);
+            modelInner.add(leftLegPivot);
+            rig.leftLeg = leftLegPivot;
+
+            const rightLegPivot = new THREE.Group();
+            rightLegPivot.position.set(0.35, 0.6, 0);
+            const rightLeg = new THREE.Mesh(legGeo, dhotiMat);
+            rightLeg.castShadow = true;
+            rightLegPivot.add(rightLeg);
+            modelInner.add(rightLegPivot);
+            rig.rightLeg = rightLegPivot;
+
+            const shieldSphere = new THREE.Mesh(new THREE.SphereGeometry(1.6, 16, 16), new THREE.MeshBasicMaterial({
+                color: 0xffaa00,
+                transparent: true,
+                opacity: 0.35,
+                wireframe: true
+            }));
+            shieldSphere.position.y = 1.3;
+            shieldSphere.visible = false;
+            rootGroup.add(shieldSphere);
+            rootGroup.userData.shieldMesh = shieldSphere;
+
+            modelInner.rotation.y = Math.PI;
+            rootGroup.userData.rig = rig;
+            rootGroup.userData.modelInner = modelInner;
+            return rootGroup;
+        }
+        const ganesha = createBalGanesha();
+        scene.add(ganesha);
+
+        /* ==========================================================
+            9. PHOTOREALISTIC NANDI (ZEBU BULL) & MUSHAK
+        ========================================================== */
+        function createRunningNandi() {
+            const nandi = new THREE.Group();
+            const rig = {};
+
+            const chest = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 0.85, 2.6, 16), nandiWhiteMat);
+            chest.rotateX(Math.PI / 2);
+            chest.position.set(0, 1.65, -0.1);
+            chest.castShadow = true;
+            chest.receiveShadow = true;
+            nandi.add(chest);
+
+            const hump = new THREE.Mesh(new THREE.SphereGeometry(0.75, 16, 16), nandiWhiteMat);
+            hump.scale.set(0.75, 1.45, 1.2);
+            hump.position.set(0, 2.6, -0.55);
+            hump.castShadow = true;
+            nandi.add(hump);
+
+            const dewlapCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 1.9, -1.1), new THREE.Vector3(0, 1.3, -1.3), new THREE.Vector3(0, 1.0, -0.9)
+            ]);
+            const dewlap = new THREE.Mesh(new THREE.TubeGeometry(dewlapCurve, 10, 0.18, 8, false), nandiWhiteMat);
+            dewlap.scale.set(0.4, 1.0, 1.0);
+            dewlap.castShadow = true;
+            nandi.add(dewlap);
+
+            const jhul = new THREE.Mesh(new THREE.CylinderGeometry(0.92, 0.94, 1.6, 16, 1, false, 0, Math.PI), new THREE.MeshStandardMaterial({
+                color: 0xb51e1e,
+                roughness: 0.6
+            }));
+            jhul.rotation.z = Math.PI;
+            jhul.rotation.y = Math.PI / 2;
+            jhul.position.set(0, 1.7, 0.05);
+            jhul.castShadow = true;
+            nandi.add(jhul);
+
+            const headGroup = new THREE.Group();
+            headGroup.position.set(0, 2.5, -1.55);
+            const skull = new THREE.Mesh(new THREE.SphereGeometry(0.6, 14, 14), nandiWhiteMat);
+            skull.scale.set(0.9, 0.95, 1.25);
+            skull.castShadow = true;
+            headGroup.add(skull);
+
+            const muzzle = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.45, 0.8, 12), nandiMuzzleMat);
+            muzzle.rotation.x = -Math.PI / 3.2;
+            muzzle.position.set(0, -0.22, -0.48);
+            muzzle.castShadow = true;
+            headGroup.add(muzzle);
+
+            [-0.45, 0.45].forEach(x => {
+                const eyeBall = new THREE.Mesh(new THREE.SphereGeometry(0.095, 10, 10), eyeBlackMat);
+                eyeBall.position.set(x, 0.16, -0.15);
+                headGroup.add(eyeBall);
+            });
+
+            const hornL = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+                new THREE.Vector3(-0.35, 0.3, -0.05), new THREE.Vector3(-0.85, 1.05, -0.18), new THREE.Vector3(-0.5, 1.8, -0.65)
+            ]), 14, 0.12, 8, false), hornRealisticMat);
+            hornL.castShadow = true;
+            headGroup.add(hornL);
+
+            const hornR = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0.35, 0.3, -0.05), new THREE.Vector3(0.85, 1.05, -0.18), new THREE.Vector3(0.5, 1.8, -0.65)
+            ]), 14, 0.12, 8, false), hornRealisticMat);
+            hornR.castShadow = true;
+            headGroup.add(hornR);
+
+            nandi.add(headGroup);
+            rig.head = headGroup;
+
+            function makeLeg() {
+                const legGroup = new THREE.Group();
+                const upper = new THREE.Mesh(new THREE.CylinderGeometry(0.26, 0.19, 0.75, 10), nandiWhiteMat);
+                upper.position.y = -0.38;
+                upper.castShadow = true;
+                legGroup.add(upper);
+                const lower = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.14, 0.7, 10), nandiWhiteMat);
+                lower.position.y = -1.1;
+                lower.castShadow = true;
+                legGroup.add(lower);
+                const hoof = new THREE.Mesh(new THREE.BoxGeometry(0.14, 0.2, 0.25), hoofMat);
+                hoof.position.set(0, -1.48, 0.04);
+                hoof.castShadow = true;
+                legGroup.add(hoof);
+                return legGroup;
+            }
+
+            const fl = makeLeg(); fl.position.set(-0.68, 1.4, -0.9); nandi.add(fl); rig.legFL = fl;
+            const fr = makeLeg(); fr.position.set(0.68, 1.4, -0.9); nandi.add(fr); rig.legFR = fr;
+            const bl = makeLeg(); bl.position.set(-0.68, 1.4, 0.9); nandi.add(bl); rig.legBL = bl;
+            const br = makeLeg(); br.position.set(0.68, 1.4, 0.9); nandi.add(br); rig.legBR = br;
+
+            const tailMesh = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 1.7, 1.5), new THREE.Vector3(0, 1.1, 1.8), new THREE.Vector3(0, 0.5, 1.95)
+            ]), 10, 0.05, 6, false), nandiWhiteMat);
+            tailMesh.castShadow = true;
+            nandi.add(tailMesh);
+            rig.tail = tailMesh;
+
+            nandi.userData.rig = rig;
+            return nandi;
+        }
+        const nandiCompanion = createRunningNandi();
+        scene.add(nandiCompanion);
+
+        function createMushak() {
+            const ratGroup = new THREE.Group();
+            const inner = new THREE.Group();
+            ratGroup.add(inner);
+
+            const pelvis = new THREE.Mesh(new THREE.SphereGeometry(0.24, 16, 16), ratFurMat);
+            pelvis.scale.set(1.0, 1.1, 1.4);
+            pelvis.position.set(0, 0.28, -0.1);
+            pelvis.castShadow = true;
+            inner.add(pelvis);
+
+            const head = new THREE.Mesh(new THREE.ConeGeometry(0.15, 0.42, 14), ratFurMat);
+            head.rotation.x = -Math.PI / 2.1;
+            head.position.set(0, 0.26, 0.45);
+            head.castShadow = true;
+            inner.add(head);
+
+            const noseTip = new THREE.Mesh(new THREE.SphereGeometry(0.045, 10, 10), pinkMat);
+            noseTip.position.set(0, 0.25, 0.68);
+            inner.add(noseTip);
+
+            [-0.11, 0.11].forEach(x => {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.038, 10, 10), eyeBlackMat);
+                eye.position.set(x, 0.31, 0.46);
+                inner.add(eye);
+            });
+
+            [-0.14, 0.14].forEach((x, i) => {
+                const ear = new THREE.Mesh(new THREE.CylinderGeometry(0.11, 0.11, 0.02, 14), ratSkinMat);
+                ear.rotation.x = Math.PI / 2.5;
+                ear.rotation.z = i === 0 ? 0.35 : -0.35;
+                ear.position.set(x, 0.41, 0.28);
+                ear.castShadow = true;
+                inner.add(ear);
+            });
+
+            const tailGeo = new THREE.TubeGeometry(new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 0.22, -0.22), new THREE.Vector3(0.04, 0.28, -0.48),
+                new THREE.Vector3(-0.06, 0.32, -0.78), new THREE.Vector3(0.02, 0.38, -1.1)
+            ]), 16, 0.035, 6, false);
+            const tail = new THREE.Mesh(tailGeo, ratSkinMat);
+            tail.castShadow = true;
+            inner.add(tail);
+
+            inner.rotation.y = Math.PI;
+            ratGroup.userData.inner = inner;
+            return ratGroup;
+        }
+        const mushak = createMushak();
+        scene.add(mushak);
+
+        function createRealPushpakaVimanam(isRider = false) {
+            const vimana = new THREE.Group();
+            vimana.userData = { type: 'FLY' };
+            const scaleFactor = isRider ? 1.45 : 0.85;
+            vimana.scale.set(scaleFactor, scaleFactor, scaleFactor);
+
+            const hull = new THREE.Mesh(new THREE.CylinderGeometry(1.6, 1.3, 0.55, 18), goldMat);
+            hull.scale.set(1.0, 1.0, 1.6);
+            hull.castShadow = true;
+            vimana.add(hull);
+
+            for (let i = 0; i < 14; i++) {
+                const petal = new THREE.Mesh(new THREE.ConeGeometry(0.35, 0.75, 6), dhotiMat);
+                petal.rotation.x = Math.PI / 2 + 0.35;
+                petal.rotation.y = (i * Math.PI) / 7;
+                petal.position.set(Math.cos((i * Math.PI) / 7) * 1.5, 0.12, Math.sin((i * Math.PI) / 7) * 2.2);
+                petal.castShadow = true;
+                vimana.add(petal);
+            }
+
+            const neckCurve = new THREE.CatmullRomCurve3([
+                new THREE.Vector3(0, 0.3, -1.5), new THREE.Vector3(0, 1.0, -2.1),
+                new THREE.Vector3(0, 1.6, -2.3), new THREE.Vector3(0, 1.4, -2.5)
+            ]);
+            const swanNeck = new THREE.Mesh(new THREE.TubeGeometry(neckCurve, 14, 0.22, 10, false), ivoryMat);
+            swanNeck.castShadow = true;
+            vimana.add(swanNeck);
+
+            const swanHead = new THREE.Mesh(new THREE.SphereGeometry(0.32, 12, 12), ivoryMat);
+            swanHead.position.set(0, 1.45, -2.55);
+            swanHead.castShadow = true;
+            vimana.add(swanHead);
+
+            const swanBeak = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.45, 8), goldMat);
+            swanBeak.position.set(0, 1.4, -2.85);
+            swanBeak.rotation.x = -Math.PI / 2;
+            swanBeak.castShadow = true;
+            vimana.add(swanBeak);
+
+            const wingGeo = new THREE.BoxGeometry(2.6, 0.1, 1.0);
+            const wingL = new THREE.Mesh(wingGeo, goldMat);
+            wingL.position.set(-2.1, 0.45, -0.2);
+            wingL.rotation.z = -0.25;
+            wingL.castShadow = true;
+            const wingR = new THREE.Mesh(wingGeo, goldMat);
+            wingR.position.set(2.1, 0.45, -0.2);
+            wingR.rotation.z = 0.25;
+            wingR.castShadow = true;
+            vimana.add(wingL, wingR);
+
+            if (!isRider) {
+                const canopy = new THREE.Mesh(new THREE.ConeGeometry(1.4, 1.2, 8), redClothMat);
+                canopy.position.set(0, 1.9, 0);
+                canopy.castShadow = true;
+                vimana.add(canopy);
+            }
+            return vimana;
+        }
+        const playerPushpakaVimana = createRealPushpakaVimanam(true);
+        playerPushpakaVimana.visible = false;
+        scene.add(playerPushpakaVimana);
+
+        /* ==========================================================
+            10. PROCEDURAL COCONUT PALMS & OBSTACLES (ASURAS & FIRE TRAPS)
+        ========================================================== */
+        function makeRealisticCoconutPalm() {
+            const tree = new THREE.Group();
+            const trunkLean = (Math.random() - 0.5) * 0.8;
+            const trunkPoints = [
+                new THREE.Vector3(0, 0, 0), new THREE.Vector3(trunkLean * 0.3, 3.0, 0),
+                new THREE.Vector3(trunkLean * 0.8, 6.5, 0), new THREE.Vector3(trunkLean * 1.1, 9.5, 0)
+            ];
+            const trunk = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(trunkPoints), 20, 0.42, 10, false), palmBarkMat);
+            trunk.castShadow = true;
+            trunk.receiveShadow = true;
+            tree.add(trunk);
+
+            const crownPos = trunkPoints[3];
+            for (let c = 0; c < 5; c++) {
+                const nut = new THREE.Mesh(new THREE.SphereGeometry(0.3, 8, 8), coconutMat);
+                nut.position.set(crownPos.x + Math.cos(c * 1.25) * 0.45, crownPos.y - 0.25, crownPos.z + Math.sin(c * 1.25) * 0.45);
+                nut.scale.set(0.9, 1.2, 0.9);
+                nut.castShadow = true;
+                tree.add(nut);
+            }
+
+            for (let f = 0; f < 10; f++) {
+                const angle = (f / 10) * Math.PI * 2;
+                const frondGroup = new THREE.Group();
+                frondGroup.position.copy(crownPos);
+                frondGroup.rotation.y = angle;
+
+                const stemCurve = new THREE.CatmullRomCurve3([
+                    new THREE.Vector3(0, 0, 0), new THREE.Vector3(0, 0.6, 1.5),
+                    new THREE.Vector3(0, 0.2, 3.4), new THREE.Vector3(0, -1.2, 5.2)
+                ]);
+                const stem = new THREE.Mesh(new THREE.TubeGeometry(stemCurve, 12, 0.05, 6, false), palmBarkMat);
+                frondGroup.add(stem);
+
+                for (let l = 1; l <= 6; l++) {
+                    const t = l / 7;
+                    const pos = stemCurve.getPoint(t);
+                    const leafW = Math.sin(t * Math.PI) * 1.2;
+                    const leaflet = new THREE.Mesh(new THREE.PlaneGeometry(leafW, 0.7), palmLeafMat);
+                    leaflet.position.copy(pos);
+                    leaflet.rotation.x = Math.PI / 2.3;
+                    leaflet.castShadow = true;
+                    leaflet.receiveShadow = true;
+                    frondGroup.add(leaflet);
+                }
+                tree.add(frondGroup);
+            }
+            return tree;
+        }
+
+        function makeAgniKunda() {
+            const g = new THREE.Group();
+            g.userData = { type: 'LOW', flameMeshes: [] };
+
+            const step1 = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.3, 1.8), basaltStoneMat);
+            step1.position.y = 0.15;
+            step1.castShadow = true;
+            step1.receiveShadow = true;
+            g.add(step1);
+
+            const brassRim = new THREE.Mesh(new THREE.BoxGeometry(2.3, 0.18, 1.2), brassRimMat);
+            brassRim.position.y = 0.52;
+            brassRim.castShadow = true;
+            g.add(brassRim);
+
+            const coalBed = new THREE.Mesh(new THREE.BoxGeometry(1.9, 0.12, 0.9), glowingEmbersMat);
+            coalBed.position.y = 0.58;
+            g.add(coalBed);
+
+            const fireLight = new THREE.PointLight(0xff4500, 2.5, 7.0);
+            fireLight.position.set(0, 1.4, 0);
+            g.add(fireLight);
+            g.userData.fireLight = fireLight;
+
+            for (let i = -4; i <= 4; i++) {
+                const h = 0.8 + Math.random() * 0.5;
+                const flameOuter = new THREE.Mesh(new THREE.ConeGeometry(0.22, h, 6), fireOrangeMat);
+                flameOuter.position.set(i * 0.22, 0.6 + h / 2, (Math.random() - 0.5) * 0.3);
+                g.add(flameOuter);
+                g.userData.flameMeshes.push(flameOuter);
+            }
+            return g;
+        }
+
+        function makeAsuraObstacle() {
+            const g = new THREE.Group();
+            g.userData = { type: 'BLOCK' };
+
+            const torso = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 0.7, 2.2, 12), asuraSkinMat);
+            torso.position.y = 1.3;
+            torso.castShadow = true;
+            torso.receiveShadow = true;
+            g.add(torso);
+
+            const armor = new THREE.Mesh(new THREE.BoxGeometry(1.8, 1.2, 1.1), asuraArmorMat);
+            armor.position.set(0, 1.4, 0);
+            armor.castShadow = true;
+            g.add(armor);
+
+            const head = new THREE.Mesh(new THREE.SphereGeometry(0.55, 12, 12), asuraSkinMat);
+            head.position.set(0, 2.6, 0);
+            head.castShadow = true;
+            g.add(head);
+
+            const helm = new THREE.Mesh(new THREE.ConeGeometry(0.58, 0.7, 8), asuraArmorMat);
+            helm.position.set(0, 3.1, 0);
+            helm.castShadow = true;
+            g.add(helm);
+
+            [-0.2, 0.2].forEach(x => {
+                const eye = new THREE.Mesh(new THREE.SphereGeometry(0.06, 8, 8), asuraEyeMat);
+                eye.position.set(x, 2.65, 0.48);
+                g.add(eye);
+            });
+
+            const club = new THREE.Mesh(new THREE.CylinderGeometry(0.25, 0.45, 3.2, 10), asuraClubMat);
+            club.position.set(0, 1.6, 0.6);
+            club.rotation.z = Math.PI / 2;
+            club.castShadow = true;
+            g.add(club);
+
+            return g;
+        }
+
+        function makeFloralToran() {
+            const g = new THREE.Group();
+            g.userData = { type: 'HIGH' };
+
+            const p1 = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.28, 3.4, 12), basaltStoneMat);
+            p1.position.set(-1.38, 1.7, 0);
+            p1.castShadow = true;
+            const p2 = p1.clone();
+            p2.position.x = 1.38;
+            g.add(p1, p2);
+
+            const lintel = new THREE.Mesh(new THREE.BoxGeometry(3.3, 0.45, 0.45), basaltStoneMat);
+            lintel.position.y = 3.55;
+            lintel.castShadow = true;
+            g.add(lintel);
+
+            const valance = new THREE.Mesh(new THREE.BoxGeometry(3.2, 0.25, 0.48), redClothMat);
+            valance.position.y = 3.25;
+            valance.castShadow = true;
+            g.add(valance);
+
+            for (let i = 0; i <= 14; i++) {
+                const t = i / 14;
+                const x = -1.35 + t * 2.7;
+                const y = 3.15 - Math.sin(t * Math.PI) * 0.5;
+                const marigold = new THREE.Mesh(new THREE.SphereGeometry(0.12, 8, 8), (i % 2 === 0) ? marigoldOrangeMat : marigoldYellowMat);
+                marigold.position.set(x, y, 0);
+                g.add(marigold);
+            }
+            return g;
+        }
+
+        function makeTempleBell() {
+            const g = new THREE.Group();
+            g.userData = { type: 'BELL' };
+
+            const chain = new THREE.Mesh(new THREE.CylinderGeometry(0.045, 0.045, 1.8, 8), hammeredBronzeMat);
+            chain.position.y = 3.25;
+            chain.castShadow = true;
+            g.add(chain);
+
+            const bell = new THREE.Mesh(new THREE.ConeGeometry(0.62, 0.95, 16), hammeredBronzeMat);
+            bell.position.y = 2.15;
+            bell.castShadow = true;
+            g.add(bell);
+            return g;
+        }
+
+        function makeModak() {
+            const g = new THREE.Group();
+            g.userData = { type: 'MODAK' };
+            const b = new THREE.Mesh(new THREE.SphereGeometry(0.35, 12, 12), goldMat);
+            b.scale.set(1, 0.72, 1);
+            b.castShadow = true;
+            g.add(b);
+            const tip = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.48, 12), goldMat);
+            tip.position.y = 0.26;
+            g.add(tip);
+            return g;
+        }
+
+        /* ==========================================================
+            11. TRACK CHUNKS REBUILD
+        ========================================================== */
+        const CHUNK_LEN = 40;
+        const NUM_CHUNKS = 5;
+        const trackChunks = [];
+
+        function populateChunk(chunkGroup, chunkIndex) {
+            for (let i = chunkGroup.children.length - 1; i >= 0; i--) {
+                const c = chunkGroup.children[i];
+                if (c.userData && c.userData.type) {
+                    chunkGroup.remove(c);
+                }
+            }
+
+            if (chunkIndex === 0) return;
+
+            const zOffsets = [-10, -28];
+            zOffsets.forEach(zOff => {
+                const laneIdx = Math.floor(Math.random() * 3);
+                const laneX = LANES[laneIdx];
+                const r = Math.random();
+
+                let obs;
+                if (r < 0.22) obs = makeAgniKunda();
+                else if (r < 0.48) obs = makeAsuraObstacle();
+                else if (r < 0.75) obs = makeFloralToran();
+                else obs = makeTempleBell();
+
+                obs.position.set(laneX, 0, zOff);
+                chunkGroup.add(obs);
+
+                const coinLane = (laneIdx + 1) % 3;
+                for (let k = 0; k < 3; k++) {
+                    const m = makeModak();
+                    m.position.set(LANES[coinLane], 0.7, zOff - 4 - (k * 2.8));
+                    chunkGroup.add(m);
+                }
+
+                if (Math.random() < 0.16) {
+                    const pRand = Math.random();
+                    let pItem;
+                    if (pRand < 0.52) {
+                        pItem = new THREE.Group();
+                        pItem.userData = { type: 'MAGNET' };
+                        const mRing = new THREE.Mesh(new THREE.TorusGeometry(0.4, 0.12, 8, 16), magnetMat);
+                        mRing.position.y = 1.0;
+                        pItem.add(mRing);
+                    } else if (pRand < 0.88) {
+                        pItem = new THREE.Group();
+                        pItem.userData = { type: 'SHIELD' };
+                        const sBall = new THREE.Mesh(new THREE.SphereGeometry(0.4, 8, 8), shieldMat);
+                        sBall.position.y = 1.0;
+                        pItem.add(sBall);
+                    } else {
+                        pItem = createRealPushpakaVimanam(false);
+                        pItem.position.y = 1.0;
+                    }
+                    pItem.position.set(LANES[(laneIdx + 2) % 3], pItem.position.y, zOff - 6);
+                    chunkGroup.add(pItem);
+                }
+            });
+        }
+
+        function createChunk(zPos, index) {
+            const group = new THREE.Group();
+            group.position.z = zPos;
+
+            const road = new THREE.Mesh(new THREE.PlaneGeometry(9.6, CHUNK_LEN), stonePathwayMat);
+            road.rotation.x = -Math.PI / 2;
+            road.receiveShadow = true;
+            group.add(road);
+
+            const curbGeo = new THREE.BoxGeometry(0.35, 0.35, CHUNK_LEN);
+            const curbL = new THREE.Mesh(curbGeo, basaltStoneMat);
+            curbL.position.set(-4.8, 0.18, 0);
+            curbL.castShadow = true;
+            curbL.receiveShadow = true;
+            const curbR = curbL.clone();
+            curbR.position.x = 4.8;
+            group.add(curbL, curbR);
+
+            const waterL = new THREE.Mesh(new THREE.PlaneGeometry(16, CHUNK_LEN), waterMat);
+            waterL.rotation.x = -Math.PI / 2;
+            waterL.position.set(-13, -0.1, 0);
+            waterL.receiveShadow = true;
+            group.add(waterL);
+
+            const grassR = new THREE.Mesh(new THREE.PlaneGeometry(20, CHUNK_LEN), grassMat);
+            grassR.rotation.x = -Math.PI / 2;
+            grassR.position.set(15, -0.05, 0);
+            grassR.receiveShadow = true;
+            group.add(grassR);
+
+            for (let p = -CHUNK_LEN / 2 + 6; p < CHUNK_LEN / 2; p += 14) {
+                const palm = makeRealisticCoconutPalm();
+                palm.position.set(11.5 + Math.random() * 3, 0, p);
+                group.add(palm);
+            }
+
+            for (let p = -CHUNK_LEN / 2 + 4; p < CHUNK_LEN / 2; p += 18) {
+                const sidePil = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.42, 4.8, 12), basaltStoneMat);
+                sidePil.position.set(-5.3, 2.4, p);
+                sidePil.castShadow = true;
+                sidePil.receiveShadow = true;
+                const diyaLamp = new THREE.Mesh(new THREE.SphereGeometry(0.25, 8, 8), brassRimMat);
+                diyaLamp.position.set(-5.3, 4.9, p);
+                const diyaFlame = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.35, 6), fireYellowMat);
+                diyaFlame.position.set(-5.3, 5.15, p);
+                group.add(sidePil, diyaLamp, diyaFlame);
+            }
+
+            const fountain = makeTempleFountain();
+            fountain.position.set(-7.5, 0, -10);
+            group.add(fountain);
+
+            populateChunk(group, index);
+            scene.add(group);
+            return group;
+        }
+
+        for (let i = 0; i < NUM_CHUNKS; i++) {
+            trackChunks.push(createChunk(-i * CHUNK_LEN, i));
+        }
+
+        /* ==========================================================
+            12. PARTICLES & GAME CONTROLS
+        ========================================================== */
+        const MAX_PARTICLES = 140;
+        const pGeom = new THREE.BufferGeometry();
+        const pPositions = new Float32Array(MAX_PARTICLES * 3);
+        const pVels = [];
+        const pLifes = new Float32Array(MAX_PARTICLES);
+
+        for (let i = 0; i < MAX_PARTICLES; i++) {
+            pPositions[i * 3] = 0;
+            pPositions[i * 3 + 1] = -100;
+            pPositions[i * 3 + 2] = 0;
+            pVels.push(new THREE.Vector3());
+            pLifes[i] = 0;
+        }
+        pGeom.setAttribute('position', new THREE.BufferAttribute(pPositions, 3));
+        const globalParticleSystem = new THREE.Points(pGeom, new THREE.PointsMaterial({
+            color: 0xffd700,
+            size: 0.38,
+            transparent: true,
+            opacity: 0.9
+        }));
+        scene.add(globalParticleSystem);
+
+        function triggerParticles(x, y, z, count = 12) {
+            let spawned = 0;
+            for (let i = 0; i < MAX_PARTICLES && spawned < count; i++) {
+                if (pLifes[i] <= 0) {
+                    pPositions[i * 3] = x;
+                    pPositions[i * 3 + 1] = y;
+                    pPositions[i * 3 + 2] = z;
+                    pVels[i].set((Math.random() - 0.5) * 5, Math.random() * 4 + 2, (Math.random() - 0.5) * 5);
+                    pLifes[i] = 1.0;
+                    spawned++;
+                }
+            }
+        }
+
+        const popupNotice = document.getElementById('popup-notice');
+        let popupTimeout = null;
+
+        function showScorePopup(text) {
+            popupNotice.innerText = text;
+            popupNotice.classList.add('show');
+            if (popupTimeout) clearTimeout(popupTimeout);
+            popupTimeout = setTimeout(() => {
+                popupNotice.classList.remove('show');
+            }, 550);
+        }
+
+        const shivaGuidanceEl = document.getElementById('shiva-guidance');
+        let lastShivaAdviceTime = 0;
+        const shivaGeneralWisdom = [
+            '🔱 Shiva: "Wisdom guides the wise, Vinayaka!"',
+            '🔱 Shiva: "Har Har Mahadev! Clear the sacred track!"',
+            '🔱 Shiva: "Keep your focus pure, my beloved son!"',
+            '🔱 Shiva: "Nandi and Mushak stride with you, fear no obstacle!"',
+            '🔱 Shiva: "Gather the offerings with joyous spirit!"'
+        ];
+
+        function giveShivaAdvice(text, isUrgent = false) {
+            shivaGuidanceEl.innerText = text;
+            if (isUrgent) playSfx('shiva_bell');
+        }
+
+        let isPlaying = false,
+            isPaused = false,
+            inLobby = true,
+            inPostGame = false;
+        let postGameMood = 'happy';
+        let currentLane = 1,
+            targetX = 0,
+            yVelocity = 0;
+        let isJumping = false,
+            isSliding = false,
+            slideTimer = 0,
+            gracePeriod = 0;
+        const GRAVITY = -24;
+
+        let baseSpeed = 24,
+            speed = baseSpeed,
+            distance = 0,
+            score = 0;
+        let magnetTimer = 0,
+            hasShield = false,
+            flyTimer = 0;
+
+        function moveLeft() {
+            if (!isPlaying || isPaused) return;
+            if (currentLane > 0) {
+                currentLane--;
+                targetX = LANES[currentLane];
+            }
+        }
+
+        function moveRight() {
+            if (!isPlaying || isPaused) return;
+            if (currentLane < 2) {
+                currentLane++;
+                targetX = LANES[currentLane];
+            }
+        }
+
+        function jump() {
+            if (!isPlaying || isPaused) return;
+            if (!isJumping && flyTimer <= 0) {
+                isJumping = true;
+                isSliding = false;
+                ganesha.scale.set(1, 1, 1);
+                yVelocity = 11.2;
+                playSfx('jump');
+            }
+        }
+
+        function slide() {
+            if (!isPlaying || isPaused) return;
+            if (flyTimer > 0) return;
+            if (isJumping) yVelocity = -18;
+            if (!isSliding) {
+                isSliding = true;
+                slideTimer = 0.65;
+                playSfx('slide');
+            }
+        }
+
+        function togglePause() {
+            if (!isPlaying) return;
+            isPaused = !isPaused;
+            const pauseScreen = document.getElementById('pause-screen');
+            pauseScreen.style.display = isPaused ? 'flex' : 'none';
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
+            if (!isPlaying || isPaused) return;
+            if (e.code === 'KeyA' || e.code === 'ArrowLeft') moveLeft();
+            if (e.code === 'KeyD' || e.code === 'ArrowRight') moveRight();
+            if (e.code === 'KeyW' || e.code === 'ArrowUp' || e.code === 'Space') jump();
+            if (e.code === 'KeyS' || e.code === 'ArrowDown') slide();
+        });
+
+        let touchStartX = 0,
+            touchStartY = 0;
+        window.addEventListener('touchstart', (e) => {
+            initAudio();
+            touchStartX = e.changedTouches[0].clientX;
+            touchStartY = e.changedTouches[0].clientY;
+        }, { passive: true });
+
+        window.addEventListener('touchend', (e) => {
+            if (!isPlaying || isPaused) return;
+            const dx = e.changedTouches[0].clientX - touchStartX;
+            const dy = e.changedTouches[0].clientY - touchStartY;
+            if (Math.max(Math.abs(dx), Math.abs(dy)) > 22) {
+                if (Math.abs(dx) > Math.abs(dy)) {
+                    if (dx > 0) moveRight();
+                    else moveLeft();
+                } else {
+                    if (dy < 0) jump();
+                    else slide();
+                }
+            }
+        }, { passive: true });
+
+        function attachBtn(id, action) {
+            const btn = document.getElementById(id);
+            if (!btn) return;
+            btn.addEventListener('pointerdown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                initAudio();
+                action();
+            });
+        }
+
+        attachBtn('m-left', moveLeft);
+        attachBtn('m-right', moveRight);
+        attachBtn('m-jump', jump);
+        attachBtn('m-slide', slide);
+        attachBtn('pause-btn', togglePause);
+        attachBtn('resume-btn', togglePause);
+
+        const startScreen = document.getElementById('start-screen');
+        const gameoverScreen = document.getElementById('gameover-screen');
+        const pauseScreen = document.getElementById('pause-screen');
+        const hud = document.getElementById('hud');
+        const mobileControls = document.getElementById('mobile-controls');
+        const scoreVal = document.getElementById('score-val');
+        const distVal = document.getElementById('dist-val');
+        const badgeMagnet = document.getElementById('badge-magnet');
+        const badgeShield = document.getElementById('badge-shield');
+        const badgeFly = document.getElementById('badge-fly');
+
+        const finalModaks = document.getElementById('final-modaks');
+        const finalDistance = document.getElementById('final-distance');
+        const finalBest = document.getElementById('final-best');
+        const lobbyBestVal = document.getElementById('lobby-best-val');
+        const highScoreBanner = document.getElementById('high-score-banner');
+        const devotionRank = document.getElementById('devotion-rank');
+        const resultStatusTitle = document.getElementById('result-status-title');
+        const shivaFinalBlessing = document.getElementById('shiva-final-blessing');
+
+        const savedHigh = localStorage.getItem('ganesha_surfers_high') || '0';
+        if (lobbyBestVal) lobbyBestVal.innerText = savedHigh;
+
+        function resetGame() {
+            trackChunks.forEach((c, idx) => {
+                c.position.z = -idx * CHUNK_LEN;
+                populateChunk(c, idx);
+            });
+
+            for (let i = 0; i < MAX_PARTICLES; i++) {
+                pLifes[i] = 0;
+                pPositions[i * 3 + 1] = -100;
+            }
+            pGeom.attributes.position.needsUpdate = true;
+
+            currentLane = 1;
+            targetX = LANES[1];
+            ganesha.position.set(0, 0, 0);
+            ganesha.scale.set(1, 1, 1);
+            ganesha.rotation.set(0, 0, 0);
+            ganesha.userData.modelInner.rotation.y = Math.PI;
+
+            mushak.position.set(-0.8, 0, 0.4);
+            mushak.userData.inner.rotation.y = Math.PI;
+
+            nandiCompanion.position.set(7.5, 0, 0);
+            playerPushpakaVimana.visible = false;
+
+            yVelocity = 0;
+            isJumping = false;
+            isSliding = false;
+            gracePeriod = 0;
+            speed = baseSpeed;
+            distance = 0;
+            score = 0;
+
+            magnetTimer = 0;
+            hasShield = false;
+            flyTimer = 0;
+            ganesha.userData.shieldMesh.visible = false;
+            badgeMagnet.style.display = 'none';
+            badgeShield.style.display = 'none';
+            badgeFly.style.display = 'none';
+
+            scoreVal.innerText = '0';
+            distVal.innerText = '0m';
+            giveShivaAdvice('🔱 Shiva: "Run with joy, Vinayaka! I guide your steps!"');
+        }
+
+        function enterLobby() {
+            inLobby = true;
+            isPlaying = false;
+            isPaused = false;
+            inPostGame = false;
+            startScreen.style.display = 'flex';
+            gameoverScreen.style.display = 'none';
+            pauseScreen.style.display = 'none';
+            hud.style.display = 'none';
+            mobileControls.style.display = 'none';
+            shivaGuidanceEl.style.display = 'none';
+
+            if (lobbyBestVal) lobbyBestVal.innerText = localStorage.getItem('ganesha_surfers_high') || '0';
+
+            ganesha.position.set(0, 0.4, -2.5);
+            ganesha.userData.modelInner.rotation.y = 0;
+            mushak.position.set(0.9, 0.4, -2.2);
+            mushak.userData.inner.rotation.y = -0.3;
+
+            nandiCompanion.position.set(3.4, 0.2, -4.5);
+            nandiCompanion.rotation.y = -0.4;
+            pedestalGroup.position.set(0, 0, -2.5);
+            pedestalGroup.visible = true;
+        }
+
+        function startGame() {
+            initAudio();
+            resetGame();
+            inLobby = false;
+            isPaused = false;
+            inPostGame = false;
+            pedestalGroup.visible = false;
+
+            startScreen.style.display = 'none';
+            gameoverScreen.style.display = 'none';
+            pauseScreen.style.display = 'none';
+            hud.style.display = 'flex';
+            shivaGuidanceEl.style.display = 'block';
+            mobileControls.style.display = 'flex';
+            isPlaying = true;
+        }
+
+        function triggerGameOver() {
+            isPlaying = false;
+            isPaused = false;
+            inPostGame = true;
+            mobileControls.style.display = 'none';
+            shivaGuidanceEl.style.display = 'none';
+            pauseScreen.style.display = 'none';
+            playerPushpakaVimana.visible = false;
+
+            playSfx('crash');
+            triggerParticles(ganesha.position.x, ganesha.position.y + 1, ganesha.position.z, 28);
+
+            const currentHigh = parseInt(localStorage.getItem('ganesha_surfers_high') || '0', 10);
+            const isNewRecord = score > currentHigh;
+            if (isNewRecord) localStorage.setItem('ganesha_surfers_high', score.toString());
+            const bestScore = Math.max(score, currentHigh);
+
+            if (isNewRecord || score >= 20) {
+                postGameMood = 'happy';
+                resultStatusTitle.innerText = "AARTI OF JOY & VICTORY!";
+                shivaFinalBlessing.innerText = '🔱 Lord Shiva: "Magnificent, Ganesha! Nandi and the Devas celebrate your glory!"';
+                highScoreBanner.style.display = isNewRecord ? 'block' : 'none';
+                playSfx('victory');
+            } else {
+                postGameMood = 'tired';
+                resultStatusTitle.innerText = "AARTI COMPLETED";
+                shivaFinalBlessing.innerText = '🔱 Lord Shiva: "Rest well, sweet son. Nandi will guard your peaceful sleep!"';
+                highScoreBanner.style.display = 'none';
+            }
+
+            finalModaks.innerText = score;
+            finalDistance.innerText = `${Math.floor(distance)}m`;
+            finalBest.innerText = bestScore;
+
+            ganesha.position.set(0, 0.1, -1.8);
+            ganesha.userData.modelInner.rotation.y = 0;
+            mushak.position.set(0.85, 0.1, -1.6);
+            nandiCompanion.position.set(2.4, 0.1, -2.6);
+
+            setTimeout(() => {
+                hud.style.display = 'none';
+                gameoverScreen.style.display = 'flex';
+            }, 550);
+        }
+
+        attachBtn('start-btn', startGame);
+        attachBtn('restart-btn', startGame);
+        attachBtn('gameover-lobby-btn', enterLobby);
+        attachBtn('pause-restart-btn', startGame);
+        attachBtn('pause-lobby-btn', enterLobby);
+
+        enterLobby();
+
+        /* ==========================================================
+            13. ANIMATION LOOP & KINEMATICS ENGINE
+        ========================================================== */
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            if (isPaused) return;
+
+            const delta = Math.min(clock.getDelta(), 0.05);
+            const elapsedTime = clock.getElapsedTime();
+
+            if (shivaGod && shivaGod.userData.halo) {
+                shivaGod.userData.halo.rotation.z += 0.4 * delta;
+            }
+
+            birds.forEach(b => {
+                const flap = Math.sin(elapsedTime * 12.0 + b.offset) * 0.45;
+                b.wingL.rotation.z = flap;
+                b.wingR.rotation.z = -flap;
+                b.mesh.position.x += Math.sin(elapsedTime * 0.8) * 0.08;
+            });
+
+            waterfalls.forEach(wf => {
+                wf.material.opacity = 0.82 + Math.sin(elapsedTime * 15.0) * 0.1;
+            });
+
+            if (rainParticles.visible) {
+                const positions = rainGeo.attributes.position.array;
+                for (let i = 0; i < RAIN_COUNT; i++) {
+                    positions[i * 3 + 1] -= 32 * delta;
+                    if (positions[i * 3 + 1] < 0) positions[i * 3 + 1] = 28;
+                }
+                rainGeo.attributes.position.needsUpdate = true;
+            }
+            if (petalParticles.visible) {
+                const positions = petalGeo.attributes.position.array;
+                for (let i = 0; i < PETAL_COUNT; i++) {
+                    positions[i * 3 + 1] -= 5 * delta;
+                    positions[i * 3] += Math.sin(elapsedTime + i) * 0.05;
+                    if (positions[i * 3 + 1] < 0) positions[i * 3 + 1] = 22;
+                }
+                petalGeo.attributes.position.needsUpdate = true;
+            }
+
+            const rig = ganesha.userData.rig;
+            const nandiRig = nandiCompanion.userData.rig;
+
+            const isBlinking = (elapsedTime % 3.5) < 0.16;
+            if (rig && rig.eyelids) {
+                rig.eyelids.forEach(lid => {
+                    lid.scale.y = isBlinking ? 0.95 : 0.05;
+                });
+            }
+
+            if (inLobby) {
+                rig.torso.position.y = 1.0 + Math.sin(elapsedTime * 2.0) * 0.03;
+                rig.leftArm.rotation.x = -1.4 + Math.sin(elapsedTime * 2.5) * 0.2;
+                rig.rightArm.rotation.x = -0.3 + Math.cos(elapsedTime * 1.5) * 0.1;
+                rig.trunk.rotation.z = Math.sin(elapsedTime * 1.8) * 0.18;
+                rig.leftEar.rotation.y = 0.35 + Math.sin(elapsedTime * 2.0) * 0.12;
+                rig.rightEar.rotation.y = -0.35 - Math.sin(elapsedTime * 2.0) * 0.12;
+
+                pedestalGroup.rotation.y += 0.4 * delta;
+                camera.position.set(0, 1.8, 1.2);
+                camera.lookAt(0, 1.3, -2.5);
+
+                ganeshaAuraLight.position.set(ganesha.position.x, ganesha.position.y + 1.2, ganesha.position.z);
+                renderer.render(scene, camera);
+                return;
+            }
+
+            if (inPostGame) {
+                if (postGameMood === 'happy') {
+                    ganesha.position.y = Math.abs(Math.sin(elapsedTime * 4.0)) * 0.4;
+                    rig.leftArm.rotation.x = -2.4 + Math.sin(elapsedTime * 6.0) * 0.3;
+                    rig.rightArm.rotation.x = -2.4 + Math.cos(elapsedTime * 6.0) * 0.3;
+                }
+                camera.position.set(0, 1.8, 1.4);
+                camera.lookAt(0, 1.1, -1.8);
+                renderer.render(scene, camera);
+                return;
+            }
+
+            if (isPlaying) {
+                const stepDist = speed * delta;
+                distance += stepDist;
+                speed += 0.3 * delta;
+                distVal.innerText = `${Math.floor(distance)}m`;
+
+                const lerpFactor = 1 - Math.exp(-15 * delta);
+                ganesha.position.x += (targetX - ganesha.position.x) * lerpFactor;
+                ganesha.rotation.z = -(targetX - ganesha.position.x) * 0.18;
+
+                if (gracePeriod > 0) gracePeriod -= delta;
+
+                if (flyTimer > 0) {
+                    flyTimer -= delta;
+                    ganesha.position.y += (5.8 - ganesha.position.y) * (lerpFactor * 0.8);
+                    playerPushpakaVimana.visible = true;
+                    playerPushpakaVimana.position.set(ganesha.position.x, ganesha.position.y - 0.25, ganesha.position.z);
+                    playerPushpakaVimana.rotation.z = ganesha.rotation.z;
+
+                    if (flyTimer <= 0) {
+                        badgeFly.style.display = 'none';
+                        playerPushpakaVimana.visible = false;
+                        yVelocity = 0;
+                        isJumping = true;
+                        gracePeriod = 0.8;
+                    }
+                } else {
+                    playerPushpakaVimana.visible = false;
+                    if (isJumping) {
+                        ganesha.position.y += yVelocity * delta;
+                        yVelocity += GRAVITY * delta;
+                        if (ganesha.position.y <= 0) {
+                            ganesha.position.y = 0;
+                            isJumping = false;
+                            yVelocity = 0;
+                            triggerParticles(ganesha.position.x, 0.1, ganesha.position.z, 8);
+                        }
+                    }
+                    if (isSliding) {
+                        slideTimer -= delta;
+                        if (slideTimer <= 0) {
+                            isSliding = false;
+                            if (!isJumping) ganesha.position.y = 0;
+                        }
+                    }
+                }
+
+                const runCycle = distance * 1.3;
+                if (flyTimer > 0) {
+                    rig.leftArm.rotation.x = -1.5;
+                    rig.rightArm.rotation.x = -1.5;
+                } else if (isSliding) {
+                    ganesha.rotation.x = 0.4;
+                    ganesha.position.y = 0.2;
+                    ganesha.scale.set(1.1, 0.5, 1.2);
+                } else if (isJumping) {
+                    ganesha.scale.set(1, 1, 1);
+                    ganesha.rotation.x = 0.15;
+                    rig.leftArm.rotation.x = -2.2;
+                    rig.rightArm.rotation.x = -2.2;
+                } else {
+                    ganesha.scale.set(1, 1, 1);
+                    ganesha.rotation.x = -0.12;
+                    ganesha.position.y = Math.abs(Math.sin(runCycle)) * 0.16;
+
+                    rig.leftLeg.rotation.x = Math.sin(runCycle) * 0.9;
+                    rig.rightLeg.rotation.x = -Math.sin(runCycle) * 0.9;
+                    rig.leftArm.rotation.x = -Math.sin(runCycle) * 0.85;
+                    rig.rightArm.rotation.x = Math.sin(runCycle) * 0.85;
+
+                    rig.trunk.rotation.z = Math.sin(runCycle * 0.6) * 0.28;
+                    rig.leftEar.rotation.y = 0.35 + Math.sin(runCycle) * 0.2;
+                    rig.rightEar.rotation.y = -0.35 - Math.sin(runCycle) * 0.2;
+                }
+
+                mushak.position.x += (ganesha.position.x - 0.75 - mushak.position.x) * (lerpFactor * 1.2);
+                mushak.position.z = ganesha.position.z + 0.3;
+                mushak.position.y = isJumping ? ganesha.position.y * 0.9 : Math.abs(Math.sin(distance * 2.2)) * 0.14;
+
+                nandiCompanion.position.set(7.5, Math.abs(Math.sin(distance * 1.4)) * 0.22, ganesha.position.z + 1.2);
+                if (nandiRig) {
+                    const nandiCycle = distance * 1.4;
+                    nandiRig.legFL.rotation.x = Math.sin(nandiCycle) * 0.85;
+                    nandiRig.legFR.rotation.x = -Math.sin(nandiCycle) * 0.85;
+                    nandiRig.legBL.rotation.x = -Math.sin(nandiCycle) * 0.75;
+                    nandiRig.legBR.rotation.x = Math.sin(nandiCycle) * 0.75;
+                    nandiRig.head.rotation.x = Math.sin(nandiCycle) * 0.12;
+                    nandiRig.tail.rotation.z = Math.sin(nandiCycle * 2) * 0.25;
+                }
+
+                if (hasShield) ganesha.userData.shieldMesh.rotation.y += 2.0 * delta;
+                if (magnetTimer > 0) {
+                    magnetTimer -= delta;
+                    if (magnetTimer <= 0) badgeMagnet.style.display = 'none';
+                }
+
+                if (clock.getElapsedTime() - lastShivaAdviceTime > 8.0) {
+                    lastShivaAdviceTime = clock.getElapsedTime();
+                    giveShivaAdvice(shivaGeneralWisdom[Math.floor(Math.random() * shivaGeneralWisdom.length)], false);
+                }
+
+                trackChunks.forEach(chunk => {
+                    chunk.position.z += stepDist;
+
+                    for (let i = chunk.children.length - 1; i >= 0; i--) {
+                        const item = chunk.children[i];
+                        if (!item.userData || !item.userData.type) continue;
+
+                        const worldZ = chunk.position.z + item.position.z;
+                        const worldX = item.position.x;
+                        const worldY = item.position.y;
+
+                        if (item.userData.type === 'LOW' && item.userData.flameMeshes) {
+                            item.userData.flameMeshes.forEach(fm => {
+                                fm.scale.y = 0.9 + Math.sin(elapsedTime * 14.0) * 0.15;
+                            });
+                        }
+
+                        if (item.userData.type === 'MODAK') {
+                            item.rotation.y += 3.0 * delta;
+                            if (magnetTimer > 0 && Math.abs(worldZ - ganesha.position.z) < 14) {
+                                item.position.x += (ganesha.position.x - worldX) * 8 * delta;
+                            }
+                            if (Math.abs(worldZ - ganesha.position.z) < 1.2 && Math.abs(worldX - ganesha.position.x) < 0.9) {
+                                if (Math.abs(worldY - (ganesha.position.y + 0.8)) < 1.6) {
+                                    score++;
+                                    scoreVal.innerText = score;
+                                    playSfx('modak');
+                                    triggerParticles(worldX, worldY, worldZ, 14);
+                                    chunk.remove(item);
+                                    continue;
+                                }
+                            }
+                        } else if (['MAGNET', 'SHIELD', 'FLY'].includes(item.userData.type)) {
+                            item.rotation.y += 3.0 * delta;
+                            if (Math.abs(worldZ - ganesha.position.z) < 1.4 && Math.abs(worldX - ganesha.position.x) < 1.1) {
+                                if (item.userData.type === 'MAGNET') {
+                                    magnetTimer = 8.0;
+                                    badgeMagnet.style.display = 'block';
+                                    showScorePopup('⚡ TRISHUL MAGNET!');
+                                } else if (item.userData.type === 'SHIELD') {
+                                    hasShield = true;
+                                    ganesha.userData.shieldMesh.visible = true;
+                                    badgeShield.style.display = 'block';
+                                    showScorePopup('🛡️ KAVACHA SHIELD!');
+                                } else if (item.userData.type === 'FLY') {
+                                    flyTimer = 8.0;
+                                    badgeFly.style.display = 'block';
+                                    showScorePopup('🪷 PUSHPAKA VIMANAM!');
+                                }
+                                triggerParticles(worldX, worldY, worldZ, 20);
+                                chunk.remove(item);
+                                continue;
+                            }
+                        } else if (['LOW', 'HIGH', 'BELL', 'BLOCK'].includes(item.userData.type)) {
+                            if (flyTimer <= 0 && gracePeriod <= 0) {
+                                const depthWindow = Math.max(1.0, stepDist * 1.2);
+                                if (Math.abs(worldZ - ganesha.position.z) < depthWindow && Math.abs(worldX - ganesha.position.x) < 1.05) {
+                                    let hit = false;
+                                    if (item.userData.type === 'LOW' && ganesha.position.y < 0.9) hit = true;
+                                    else if (item.userData.type === 'HIGH' && !isSliding) hit = true;
+                                    else if (item.userData.type === 'BELL' && ganesha.position.y > 0.6) hit = true;
+                                    else if (item.userData.type === 'BLOCK') hit = true;
+
+                                    if (hit) {
+                                        if (hasShield) {
+                                            hasShield = false;
+                                            ganesha.userData.shieldMesh.visible = false;
+                                            badgeShield.style.display = 'none';
+                                            showScorePopup('🛡️ SHIELD BROKEN!');
+                                            triggerParticles(worldX, worldY + 1, worldZ, 20);
+                                            chunk.remove(item);
+                                            continue;
+                                        } else {
+                                            triggerGameOver();
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if (chunk.position.z > CHUNK_LEN) {
+                        chunk.position.z -= NUM_CHUNKS * CHUNK_LEN;
+                        populateChunk(chunk, 1);
+                    }
+                });
+            }
+
+            ganeshaAuraLight.position.set(ganesha.position.x, ganesha.position.y + 1.2, ganesha.position.z);
+
+            const targetCamY = flyTimer > 0 ? 8.2 : 4.4;
+            const targetCamZ = flyTimer > 0 ? 9.5 : 7.2;
+            camera.position.x += (targetX * 0.2 - camera.position.x) * 0.1;
+            camera.position.y += (targetCamY - camera.position.y) * 0.1;
+            camera.position.z += (targetCamZ - camera.position.z) * 0.1;
+            camera.lookAt(targetX * 0.15, 1.8, -5);
+
+            renderer.render(scene, camera);
+        }
+
+        let resizeTimer = null;
+
+        function safeResize() {
+            if (resizeTimer) clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            }, 250);
+        }
+        window.addEventListener('resize', safeResize);
+        window.addEventListener('orientationchange', safeResize);
+
+        animate();
+    </script>
+</body>
+
+</html>
